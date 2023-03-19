@@ -27,7 +27,7 @@ export class CoreApi implements Api {
     if (urlKey === undefined) {
       response.status(400);
 
-      response.send({
+      response.json({
         at: new Date().toUTCString(),
         error: {
           code: 400,
@@ -41,7 +41,7 @@ export class CoreApi implements Api {
     const { protocol, baseDomain } = this.configService.config;
     const url = `${protocol}://${baseDomain}/${urlKey}`;
 
-    response.send({
+    response.json({
       at: new Date().toUTCString(),
       url,
     });
