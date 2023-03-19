@@ -28,8 +28,12 @@ export class MappingService {
     return key;
   }
 
-  public async getUrl(code: string): Promise<string> {
-    const mappingEntry = this.database.get(code) as MappingEntry;
+  public async getUrl(code: string): Promise<string | undefined> {
+    const mappingEntry = this.database.get(code) as MappingEntry | undefined;
+
+    if (mappingEntry === undefined) {
+      return undefined;
+    }
 
     const updatedMappingEntry = {
       ...mappingEntry,

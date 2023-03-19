@@ -35,6 +35,12 @@ export class CoreApi implements Api {
     const pathElements = request.path.split('/');
     const lastPathElement = pathElements[pathElements.length - 1];
     const url = await this.mappingService.getUrl(lastPathElement);
+
+    if (url === undefined) {
+      response.sendFile(process.cwd() + '/static/404.html');
+      return;
+    }
+
     response.redirect(url);
   };
 }
