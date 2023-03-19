@@ -25,10 +25,15 @@ export class CoreApi implements Api {
     const urlKey = await this.mappingService.mapUrl(body.url, body.code);
 
     if (urlKey === undefined) {
-      response
-        .sendStatus(400)
-        .append('at', new Date().toUTCString())
-        .append('message', `Provided code '${body.code}' is already in use.`);
+      response.status(400);
+
+      response.send({
+        at: new Date().toUTCString(),
+        error: {
+          code: 400,
+          message: `Provided code '${body.code}' is already in use.`,
+        },
+      });
     }
 
     const { protocol, baseDomain } = this.configService.config;
