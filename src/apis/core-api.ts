@@ -4,8 +4,6 @@ import { Express, Request, Response } from 'express';
 import { MappingService } from '../services/mapping-service';
 import { ShortenBody } from '../types/shorten-body';
 import { ConfigService } from '../services/config-service';
-import { constants } from 'http2';
-import HTTP_STATUS_BAD_REQUEST = module;
 
 @Service()
 export class CoreApi implements Api {
@@ -28,7 +26,7 @@ export class CoreApi implements Api {
 
     if (urlKey === undefined) {
       response
-        .sendStatus(HTTP_STATUS_BAD_REQUEST)
+        .sendStatus(400)
         .append('at', new Date().toUTCString())
         .append('message', `Provided code '${body.code}' is already in use.`);
     }
