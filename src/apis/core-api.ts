@@ -4,6 +4,8 @@ import { Express, Request, Response } from 'express';
 import { MappingService } from '../services/mapping-service';
 import { ShortenBody } from '../types/shorten-body';
 import { ConfigService } from '../services/config-service';
+import { constants } from 'http2';
+import HTTP_STATUS_BAD_REQUEST = module;
 
 @Service()
 export class CoreApi implements Api {
@@ -23,9 +25,21 @@ export class CoreApi implements Api {
   ): Promise<void> => {
     const body = request.body as ShortenBody;
     const urlKey = await this.mappingService.mapUrl(body.url, body.code);
+
+    if (urlKey === undefined) {
+      response
+        .sendStatus(HTTP_STATUS_BAD_REQUEST)
+        .append('at', new Date().toUTCString())
+        .append('message', `Provided code '${body.code}' is already in use.`);
+    }
+
     const { protocol, baseDomain } = this.configService.config;
     const url = `${protocol}://${baseDomain}/${urlKey}`;
-    response.send(url);
+
+    response.send({
+      at: new Date().toUTCString(),
+      url,
+    });
   };
 
   private redirect = async (

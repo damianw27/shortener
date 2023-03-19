@@ -3,6 +3,8 @@ import { open, RootDatabase } from 'lmdb';
 import { RandomKeyService } from './random-key-service';
 import { MappingEntry } from '../types/mapping-entry';
 
+const defaultSizeOfKey = 6;
+
 @Service()
 export class MappingService {
   private database: RootDatabase;
@@ -14,8 +16,18 @@ export class MappingService {
     });
   }
 
-  public async mapUrl(url: string, code?: string): Promise<string> {
-    const key = code ?? this.randomKeyService.generateRandomKey(6);
+  public async mapUrl(url: string, code?: string): Promise<string | undefined> {
+    let key = code ?? this.randomKeyService.generateRandomKey(defaultSizeOfKey);
+
+    if (code === undefined) {
+      while (this.database.doesExist(key)) {
+        key = this.randomKeyService.generateRandomKey(defaultSizeOfKey);
+      }
+    } else {
+      if (this.database.doesExist(key)) {
+        return undefined;
+      }
+    }
 
     const mappingEntry: MappingEntry = {
       key,
