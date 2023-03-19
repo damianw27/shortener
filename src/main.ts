@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import express, { Express } from 'express';
 import bodyParser from 'body-parser';
 import { CoreApi } from './apis/core-api';
+import cors from 'cors';
 
 @Service()
 export class Main {
@@ -16,6 +17,7 @@ export class Main {
     dotenv.config();
     const app: Express = express();
     app.use(bodyParser.json());
+    app.use(cors());
     this.coreApi.registerEndpoints(app);
     app.listen(this.configService.config.port);
   };
