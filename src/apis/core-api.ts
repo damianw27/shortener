@@ -34,6 +34,8 @@ export class CoreApi implements Api {
           message: `Provided code '${body.code}' is already in use.`,
         },
       });
+
+      return;
     }
 
     const { protocol, baseDomain } = this.configService.config;
